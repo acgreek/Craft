@@ -9,6 +9,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+#include <getopt.h>
 #include "client.h"
 #include "common.h"
 #include "cube.h"
@@ -819,15 +820,33 @@ void create_window() {
     window = glfwCreateWindow(width, height, "Craft", monitor, NULL);
 }
 
+static int usage(int argc, char **argv) {
+    printf("usage: %s [options]\n", argv[0]);
+    printf("  -h HOSTNAMEORIP      hostname or ip of remote server to connect to\n");
+    printf("  -p PORT              when connecting to remote server, override default port (%d)\n", DEFAULT_PORT);
+}
+
 int main(int argc, char **argv) {
     srand(time(NULL));
     rand();
-    if (argc == 2 || argc == 3) {
-        char *hostname = argv[1];
-        int port = DEFAULT_PORT;
-        if (argc == 3) {
-            port = atoi(argv[2]);
+    int option=0; 
+    char *hostname=NULL;
+    int port = DEFAULT_PORT;
+    while (-1 != (option = getopt(argc, argv, "h:p:"))) {
+        switch (option)  {
+            case 'h': 
+                hostname = optarg;
+                break;
+            case 'p':
+                port = atoi(optarg);
+                break;
+            default: 
+                usage(argc,argv);
+                exit(1);
         }
+    }
+
+    if (hostname) {
         db_disable();
         client_enable();
         client_connect(hostname, port);
