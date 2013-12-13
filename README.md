@@ -46,7 +46,7 @@ You can run your own server or connect to mine. The server uses the same SQLite 
 
 #### Client
 
-    ./craft 199.115.118.225 16018
+    ./craft -h 199.115.118.225 -p 16018
 
 #### Server
 
