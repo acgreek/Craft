@@ -824,6 +824,8 @@ static int usage(int argc, char **argv) {
     printf("usage: %s [options]\n", argv[0]);
     printf("  -h HOSTNAMEORIP      hostname or ip of remote server to connect to\n");
     printf("  -p PORT              when connecting to remote server, override default port (%d)\n", DEFAULT_PORT);
+    printf("  -s NUM               mouse senstivity (default 25)\n", DEFAULT_PORT);
+    printf("  -x                   reverse mouse y such that moving mouse up makes player look down and viceversa\n", DEFAULT_PORT);
 }
 
 int main(int argc, char **argv) {
@@ -832,13 +834,21 @@ int main(int argc, char **argv) {
     int option=0; 
     char *hostname=NULL;
     int port = DEFAULT_PORT;
-    while (-1 != (option = getopt(argc, argv, "h:p:"))) {
+    float cursor_sensentivity=0.0025;
+    int reverse_mouse_y=0;
+    while (-1 != (option = getopt(argc, argv, "h:p:s:x"))) {
         switch (option)  {
             case 'h': 
                 hostname = optarg;
                 break;
             case 'p':
                 port = atoi(optarg);
+                break;
+            case 's':
+                cursor_sensentivity=atoi(optarg)/ 10000.0;
+                break;
+            case 'x':
+                reverse_mouse_y=1;
                 break;
             default: 
                 usage(argc,argv);
@@ -950,7 +960,9 @@ int main(int argc, char **argv) {
         if (exclusive && (px || py)) {
             double mx, my;
             glfwGetCursorPos(window, &mx, &my);
-            float m = 0.0025;
+            if (reverse_mouse_y)
+                my=-my;
+            float m = cursor_sensentivity;
             rx += (mx - px) * m;
             ry -= (my - py) * m;
             if (rx < 0) {
