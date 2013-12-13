@@ -1,3 +1,4 @@
+// vim:shiftwidth=4 et 
 #ifndef __APPLE_CC__
     #include <GL/glew.h>
 #endif
